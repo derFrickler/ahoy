@@ -7,8 +7,13 @@
 #define __CONFIG_H__
 
 
+#include <Arduino.h>
+
 // globally used
 #define DEF_PIN_OFF         255
+
+// global informational text available across modules
+extern String infoText;
 
 
 //-------------------------------------

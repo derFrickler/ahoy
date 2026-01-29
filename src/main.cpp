@@ -6,6 +6,9 @@
 #include "utils/dbg.h"
 #include "app.h"
 
+// global informational text object
+String infoText = "";
+
 app myApp;
 
 //-----------------------------------------------------------------------------

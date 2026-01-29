@@ -302,6 +302,9 @@ class PubMqtt {
                 snprintf(mVal.data(), mVal.size(), "ctrl/power/%d", i);
                 subscribe(mVal.data());
             }
+            // subscribe to informational text topic
+            subscribe("ctrl/infoText");
+
             subscribe(subscr[MQTT_SUBS_SET_TIME]);
         }
 
@@ -351,6 +354,7 @@ class PubMqtt {
             JsonObject root = json.to<JsonObject>();
 
             bool limitAbs = false;
+            String payloadStr;
             if(len > 0) {
                 char *pyld = new char[len + 1];
                 memcpy(pyld, payload, len);
@@ -362,6 +366,7 @@ class PubMqtt {
 
                 if(pyld[len-1] == 'W')
                     limitAbs = true;
+                payloadStr = String(pyld);
                 delete[] pyld;
             }
 
@@ -398,6 +403,16 @@ class PubMqtt {
             char out[128];
             serializeJson(root, out, 128);
             DPRINTLN(DBG_INFO, "json: " + String(out));
+            // if this is an infoText control message, set global variable
+            if(root.containsKey("path") && root.containsKey("cmd")) {
+                String path = root[F("path")].as<String>();
+                String cmd = root[F("cmd")].as<String>();
+                if((path == "ctrl") && (cmd == "infoText")) {
+                    DPRINTLN(DBG_INFO, "Info: " + String(payloadStr));
+                    infoText = payloadStr;
+                }
+            }
+
             (mSubscriptionCb)(root);
 
             mRxCnt++;

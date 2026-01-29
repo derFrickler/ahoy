@@ -276,10 +276,14 @@ void DisplayEPaper::actualPowerPaged(float totalPower, float totalYieldDay, floa
                 _display->println((mwh) ? "MWh" : "kWh");
             }
 
-            // Inverter online
+            // Inverter online / informational text
             _display->setFont(&FreeSans12pt7b);
             y = _display->height() - (mHeadFootPadding + 10);
-            snprintf(_fmtText, EPAPER_MAX_TEXT_LEN, " %d %s", isprod, STR_ONLINE);
+            if(infoText.length() > 0) {
+                snprintf(_fmtText, EPAPER_MAX_TEXT_LEN, "%s", infoText.c_str());
+            } else {
+                snprintf(_fmtText, EPAPER_MAX_TEXT_LEN, " %d %s", isprod, STR_ONLINE);
+            }
             _display->getTextBounds(_fmtText, 0, 0, &tbx, &tby, &tbw, &tbh);
             _display->drawInvertedBitmap(10, y - tbh, myWR, 20, 20, GxEPD_BLACK);
             x = ((_display->width() - tbw - 20) / 2) - tbx;
