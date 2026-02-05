@@ -281,14 +281,19 @@ void DisplayEPaper::actualPowerPaged(float totalPower, float totalYieldDay, floa
             y = _display->height() - (mHeadFootPadding + 10);
             if(infoText.length() > 0) {
                 snprintf(_fmtText, EPAPER_MAX_TEXT_LEN, "%s", infoText.c_str());
+                 _display->getTextBounds(_fmtText, 0, 0, &tbx, &tby, &tbw, &tbh);
+                x = ((_display->width() - tbw ) / 2) - tbx;
+                _display->setCursor(x, y);
+                _display->println(_fmtText);
             } else {
                 snprintf(_fmtText, EPAPER_MAX_TEXT_LEN, " %d %s", isprod, STR_ONLINE);
+                _display->getTextBounds(_fmtText, 0, 0, &tbx, &tby, &tbw, &tbh);
+                _display->drawInvertedBitmap(10, y - tbh, myWR, 20, 20, GxEPD_BLACK);
+                x = ((_display->width() - tbw - 20) / 2) - tbx;
+                _display->setCursor(x, y);
+                _display->println(_fmtText);
             }
-            _display->getTextBounds(_fmtText, 0, 0, &tbx, &tby, &tbw, &tbh);
-            _display->drawInvertedBitmap(10, y - tbh, myWR, 20, 20, GxEPD_BLACK);
-            x = ((_display->width() - tbw - 20) / 2) - tbx;
-            _display->setCursor(x, y);
-            _display->println(_fmtText);
+
         }
         yield();
     } while (_display->nextPage());
